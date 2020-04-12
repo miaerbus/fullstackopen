@@ -19,14 +19,13 @@ const App = (props) => {
     setNewNote('')
   }
 
+  const handleNoteChange = (event) => {
+    setNewNote(event.target.value)
+  }
+
   const notesToShow = showAll
     ? notes
     : notes.filter((note) => note.important)
-
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
-  }
 
   return (
     <div>
