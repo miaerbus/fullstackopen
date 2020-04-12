@@ -9,8 +9,6 @@ const App = (props) => {
     setSelected(Math.floor(Math.random() * props.anecdotes.length))
   }
 
-  console.log(points)
-
   const setVote = (index) => {
     const copy = [...points]
     copy[index] += 1
