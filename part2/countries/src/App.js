@@ -16,6 +16,10 @@ const App = () => {
     setFilteredName(event.target.value)
   }
 
+  const handleShowCountry = (name) => {
+    setFilteredName(name)
+  }
+
   const countriesFiltered =
     filteredName !== ''
       ? countries.filter(
@@ -28,7 +32,7 @@ const App = () => {
     <div>
       find countries
       <input value={filteredName} onChange={handleFilterChange} />
-      <Countries countries={countriesFiltered} />
+      <Countries countries={countriesFiltered} handleShowCountry={handleShowCountry} />
     </div>
   )
 }

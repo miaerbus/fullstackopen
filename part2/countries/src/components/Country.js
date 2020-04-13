@@ -1,8 +1,8 @@
 import React from 'react'
 
 const Country = ({ country }) => {
-  const languages = country.languages.map((lang) => {
-    return <li key={lang.iso639_1}>{lang.name}</li>
+  const languages = country.languages.map((lang, i) => {
+    return <li key={i}>{lang.name}</li>
   })
 
   return (
