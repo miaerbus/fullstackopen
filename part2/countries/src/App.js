@@ -10,7 +10,7 @@ const App = () => {
     axios.get('https://restcountries.eu/rest/v2/all').then((response) => {
       setCountries(response.data)
     })
-  })
+  }, [])
 
   const handleFilterChange = (event) => {
     setFilteredName(event.target.value)
@@ -32,7 +32,11 @@ const App = () => {
     <div>
       find countries
       <input value={filteredName} onChange={handleFilterChange} />
-      <Countries countries={countriesFiltered} handleShowCountry={handleShowCountry} />
+      <Countries
+        key={countriesFiltered}
+        countries={countriesFiltered}
+        handleShowCountry={handleShowCountry}
+      />
     </div>
   )
 }
