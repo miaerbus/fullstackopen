@@ -24,8 +24,23 @@ const App = () => {
       number: newNumber,
     }
 
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    const personAlreadyExists = persons.some((p) => p.name === newName)
+
+    if (personAlreadyExists) {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const person = persons.find((p) => p.name === newName)
+        const updatedPerson = { ...person, number: newNumber }
+
+        noteService.update(person.id, updatedPerson).then((returnedPerson) => {
+          setPersons(persons.map((person) => (person.name !== newName ? person : returnedPerson)))
+          setNewName('')
+          setNewNumber('')
+        })
+      }
       return
     }
 
