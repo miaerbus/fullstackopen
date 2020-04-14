@@ -65,21 +65,23 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 const generateId = () => {
-  return Math.floor(Math.random() * Number.MAX_VALUE)
+  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
 }
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  if (!body.name) {
+  if (!body.name || !body.number) {
     return response.status(400).json({
-      error: 'Name is missing',
+      error: 'name or number are missing',
     })
   }
 
-  if (!body.number) {
+  const nameAlreadyExists = persons.find((person) => person.name === body.name)
+
+  if (nameAlreadyExists) {
     return response.status(400).json({
-      error: 'Number is missing',
+      error: 'name must be unique',
     })
   }
 
