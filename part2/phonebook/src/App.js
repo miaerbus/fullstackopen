@@ -36,6 +36,17 @@ const App = () => {
     })
   }
 
+  const deleteName = (id) => {
+    noteService
+      .deletePerson(id)
+      .then(() => {
+        setPersons(persons.filter((p) => p.id !== id))
+      })
+      .catch((error) => {
+        alert(error)
+      })
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -72,7 +83,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={personsFiltered} />
+      <Persons persons={personsFiltered} deleteName={deleteName} />
     </div>
   )
 }
