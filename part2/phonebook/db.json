@@ -21,14 +21,14 @@
       "id": 4
     },
     {
-      "id": 6,
-      "name": "Klara",
-      "number": "1243"
-    },
-    {
       "name": "Mia",
       "number": "423542",
       "id": 7
+    },
+    {
+      "name": "Klara",
+      "number": "45632",
+      "id": 8
     }
   ]
 }

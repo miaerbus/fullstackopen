@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filteredName, setFilteredName] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [className, setClassName] = useState('')
 
   useEffect(() => {
     noteService.getAll().then((persons) => {
@@ -44,7 +45,10 @@ const App = () => {
           )
           setNewName('')
           setNewNumber('')
-          setNotificationMessage(`Updated ${returnedPerson.name}'s phone number`)
+          setClassName('success')
+          setNotificationMessage(
+            `Updated ${returnedPerson.name}'s phone number`
+          )
           setTimeout(() => {
             setNotificationMessage(null)
           }, 5000)
@@ -57,6 +61,7 @@ const App = () => {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      setClassName('success')
       setNotificationMessage(`Added ${returnedPerson.name}`)
       setTimeout(() => {
         setNotificationMessage(null)
@@ -70,8 +75,16 @@ const App = () => {
       .then(() => {
         setPersons(persons.filter((p) => p.id !== id))
       })
-      .catch((error) => {
-        alert(error)
+      .catch(() => {
+        const deletedPerson = persons.filter((p) => p.id === id)
+        setClassName('error')
+        setNotificationMessage(
+          `${deletedPerson.name} was already deleted from server`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+        setPersons(persons.filter((p) => p.id !== id))
       })
   }
 
@@ -98,7 +111,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage} className={className} />
       <Filter
         filteredName={filteredName}
         handleFilterChange={handleFilterChange}
