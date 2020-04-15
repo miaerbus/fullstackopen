@@ -3,7 +3,7 @@ import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Notification from './components/Notification'
-import noteService from './services/persons'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -14,7 +14,7 @@ const App = () => {
   const [className, setClassName] = useState('')
 
   useEffect(() => {
-    noteService.getAll().then((persons) => {
+    personService.getAll().then((persons) => {
       setPersons(persons)
     })
   }, [])
@@ -37,40 +37,53 @@ const App = () => {
         const person = persons.find((p) => p.name === newName)
         const updatedPerson = { ...person, number: newNumber }
 
-        noteService.update(person.id, updatedPerson).then((returnedPerson) => {
-          setPersons(
-            persons.map((person) =>
-              person.name !== newName ? person : returnedPerson
+        personService
+          .update(person.id, updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.name !== newName ? person : returnedPerson
+              )
             )
-          )
-          setNewName('')
-          setNewNumber('')
-          setClassName('success')
-          setNotificationMessage(
-            `Updated ${returnedPerson.name}'s phone number`
-          )
-          setTimeout(() => {
-            setNotificationMessage(null)
-          }, 5000)
-        })
+            setNewName('')
+            setNewNumber('')
+            setClassName('success')
+            setNotificationMessage(
+              `Updated ${returnedPerson.name}'s phone number`
+            )
+            setTimeout(() => {
+              setNotificationMessage(null)
+            }, 5000)
+          })
       }
       return
     }
 
-    noteService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson))
-      setNewName('')
-      setNewNumber('')
-      setClassName('success')
-      setNotificationMessage(`Added ${returnedPerson.name}`)
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 5000)
-    })
+    personService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+        setClassName('success')
+        setNotificationMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
+      .catch((error) => {
+        // this is the way to access the error message
+        console.log(error.response.data.error)
+        setClassName('error')
+        setNotificationMessage(error.response.data.error)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
   }
 
   const deleteName = (id) => {
-    noteService
+    personService
       .deletePerson(id)
       .then(() => {
         setPersons(persons.filter((p) => p.id !== id))
