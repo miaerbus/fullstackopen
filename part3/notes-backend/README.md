@@ -1,1 +1,1 @@
-This project is available in [another repository]().
+This project is available in [another repository](https://github.com/miaerbus/fullstackopen-notes).
