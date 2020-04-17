@@ -69,6 +69,25 @@ test('blog without likes will default to 0', async () => {
   expect(response.body[helper.initialBlogs.length].likes).toBe(0)
 })
 
+test('blog without title and url is not added', async () => {
+  const newBlog = {
+    author: 'Mia Erbus',
+  }
+    
+  const t = () => {
+    throw new ValidationError()
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
