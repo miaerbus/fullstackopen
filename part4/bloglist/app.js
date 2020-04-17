@@ -4,6 +4,8 @@ const app = express()
 const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
 const mongoose = require('mongoose')
+const supertest = require('supertest')
+const api = supertest(app)
 
 console.log('connecting to', config.MONGODB_URI)
 

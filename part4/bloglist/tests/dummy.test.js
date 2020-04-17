@@ -115,6 +115,33 @@ describe('favorite blog', () => {
 
   test('when list has only no blogs equals the likes of that', () => {
     const result = listHelper.favoriteBlog(listWithNoBlogs)
-    expect(result).toEqual([])
+    expect(result).toEqual({})
+  })
+})
+
+describe('most blogs', () => {
+  test('when list has only one blog equals the likes of that', () => {
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    const expected = {
+      author: 'Robert C. Martin',
+      blogs: 3,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  test('when list has many blogs equals the likes of that', () => {
+    const result = listHelper.favoriteBlog(listWithManyBlogs)
+    const expected = {
+      author: 'Edsger W. Dijkstra',
+      blogs: 1,
+    }
+
+    expect(result).toEqual(expected)
+  })
+
+  test('when list has only no blogs equals the likes of that', () => {
+    const result = listHelper.favoriteBlog(listWithNoBlogs)
+    expect(result).toEqual({})
   })
 })

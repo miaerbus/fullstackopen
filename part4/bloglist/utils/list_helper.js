@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const dummy = (blogs) => {
   return 1
 }
@@ -11,7 +13,7 @@ const totalLikes = (blogs) => {
 
 const favoriteBlog = (blogs) => {
   if (blogs === undefined || blogs.length == 0) {
-    return []
+    return {}
   }
 
   return blogs
@@ -19,8 +21,20 @@ const favoriteBlog = (blogs) => {
     .reduce((max, blog) => (max.likes > blog.likes ? max : blog))
 }
 
+// TODO:
+const mostBlogs = (blogs) => {
+  return _.chain(blogs)
+    .countBy((item) => item._id)
+    .pairs()
+    .sortBy((item) => item[1])
+    .reverse()
+    .map((item) => _.findWhere(blogs, { _id: parseInt(item[0]) }))
+    .value()
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs,
 }
