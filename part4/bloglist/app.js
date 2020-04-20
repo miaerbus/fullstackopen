@@ -7,8 +7,6 @@ const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
-const supertest = require('supertest')
-const api = supertest(app)
 
 console.log('connecting to', config.MONGODB_URI)
 

@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const supertest = require('supertest')
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
@@ -35,80 +36,99 @@ describe('when there is initially some blogs saved', () => {
 
     expect(response.body[0].id).toBeDefined()
   })
-})
 
-describe('adding a new blog', () => {
-  test('a valid blog can be added', async () => {
-    const newBlog = {
-      title: 'async/await simplifies making async calls',
-      author: 'Mia Erbus',
-      url: 'http://miaerbus.com',
-      likes: 10,
-    }
+  describe('adding a new blog', () => {
+    test('a valid blog can be added', async () => {
+      const newBlog = {
+        _id: '123456789',
+        title: 'async/await simplifies making async calls',
+        author: 'Klara',
+        url: 'http://miaerbus.com',
+        likes: 10,
+      }
 
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+      const newUser = {
+        _id: '12345',
+        name: "Mia",
+        username: 'miaerbus'
+      }
 
-    const response = await api.get('/api/blogs')
+      // TODO: 
+      await api
+        .post('/api/blogs')
+        .set(
+          'Authorization',
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pYWVyYnVzIiwiaWQiOiI1ZTliNTE4MTU5ZDRjN2U3NTQ4OGYxNDAiLCJpYXQiOjE1ODczMDIwMDl9.ILv099XQv2zoQbZw46zECZb8Cvopaw-m0DV1H7swYRg'
+        )
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
 
-    const titles = response.body.map((r) => r.title)
+      const response = await api.get('/api/blogs')
 
-    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
-    expect(titles).toContain('async/await simplifies making async calls')
+      const titles = response.body.map((r) => r.title)
+
+      expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+      expect(titles).toContain('async/await simplifies making async calls')
+    })
+
+    test('blog without likes will default to 0', async () => {
+      const newBlog = {
+        title: 'default value of likes is 0',
+        author: 'Mia Erbus',
+        url: 'http://miaerbus.com',
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .set('Authorization', 'abc123')
+        .expect(201)
+
+      const response = await api.get('/api/blogs')
+      expect(response.body[helper.initialBlogs.length].likes).toBe(0)
+    })
+
+    test('blog without title and url is not added', async () => {
+      const newBlog = {
+        author: 'Mia Erbus',
+      }
+
+      await api.post('/api/blogs').send(newBlog).expect(400)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
   })
 
-  test('blog without likes will default to 0', async () => {
-    const newBlog = {
-      title: 'default value of likes is 0',
-      author: 'Mia Erbus',
-      url: 'http://miaerbus.com',
-    }
+  describe('deletion of a blog', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToDelete = blogsAtStart[0]
 
-    await api.post('/api/blogs').send(newBlog).expect(201)
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', 'abc123')
+        .expect(204)
 
-    const response = await api.get('/api/blogs')
-    expect(response.body[helper.initialBlogs.length].likes).toBe(0)
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+      const titles = blogsAtEnd.map((r) => r.title)
+      expect(titles).not.toContain(blogToDelete.title)
+    })
   })
 
-  test('blog without title and url is not added', async () => {
-    const newBlog = {
-      author: 'Mia Erbus',
-    }
+  describe('updating a blog', () => {
+    test('succeeds with status code 200 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+      const blogToUpdate = blogsAtStart[0]
 
-    await api.post('/api/blogs').send(newBlog).expect(400)
+      await api.put(`/api/blogs/${blogToUpdate.id}`).expect(200)
 
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-  })
-})
-
-describe('deletion of a blog', () => {
-  test('succeeds with status code 204 if id is valid', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
-
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
-
-    const titles = blogsAtEnd.map((r) => r.title)
-    expect(titles).not.toContain(blogToDelete.title)
-  })
-})
-
-describe('updating a blog', () => {
-  test('succeeds with status code 200 if id is valid', async () => {
-    const blogsAtStart = await helper.blogsInDb()
-    const blogToUpdate = blogsAtStart[0]
-
-    await api.put(`/api/blogs/${blogToUpdate.id}`).expect(200)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+      const blogsAtEnd = await helper.blogsInDb()
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
   })
 })
 
