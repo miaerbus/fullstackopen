@@ -14,8 +14,10 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
+  const likesDesc = (a, b) => b.likes - a.likes
+
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    blogService.getAll().then((blogs) => setBlogs(blogs.sort(likesDesc)))
   }, [])
 
   useEffect(() => {
