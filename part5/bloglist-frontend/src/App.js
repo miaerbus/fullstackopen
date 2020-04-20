@@ -8,9 +8,6 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [message, setMessage] = useState(null)
   const [className, setClassName] = useState(null)
   const [username, setUsername] = useState('')
@@ -60,40 +57,18 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    }
-
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog))
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
       setClassName('success')
       setMessage(
         `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
       )
-      blogFormRef.current.toggleVisibility()
       setTimeout(() => {
         setMessage(null)
       }, 5000)
     })
-  }
-
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
   }
 
   const loginForm = () => (
@@ -124,15 +99,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel="new note" ref={blogFormRef}>
-      <BlogForm
-        onSubmit={addBlog}
-        handleTitleChange={handleTitleChange}
-        handleAuthorChange={handleAuthorChange}
-        handleUrlChange={handleUrlChange}
-        newTitle={newTitle}
-        newAuthor={newAuthor}
-        newUrl={newUrl}
-      ></BlogForm>
+      <BlogForm createBlog={addBlog}></BlogForm>
     </Togglable>
   )
 
