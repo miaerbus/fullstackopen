@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -75,6 +77,7 @@ const App = () => {
       setMessage(
         `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
       )
+      blogFormRef.current.toggleVisibility()
       setTimeout(() => {
         setMessage(null)
       }, 5000)
@@ -117,22 +120,20 @@ const App = () => {
     </form>
   )
 
+  const blogFormRef = React.createRef()
+
   const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        <label>title:</label>
-        <input value={newTitle} onChange={handleTitleChange} />
-      </div>
-      <div>
-        <label>author:</label>
-        <input value={newAuthor} onChange={handleAuthorChange} />
-      </div>
-      <div>
-        <label>url:</label>
-        <input value={newUrl} onChange={handleUrlChange} />
-      </div>
-      <button type="submit">create</button>
-    </form>
+    <Togglable buttonLabel="new note" ref={blogFormRef}>
+      <BlogForm
+        onSubmit={addBlog}
+        handleTitleChange={handleTitleChange}
+        handleAuthorChange={handleAuthorChange}
+        handleUrlChange={handleUrlChange}
+        newTitle={newTitle}
+        newAuthor={newAuthor}
+        newUrl={newUrl}
+      ></BlogForm>
+    </Togglable>
   )
 
   return (
