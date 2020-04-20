@@ -9,7 +9,8 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [className, setClassName] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -44,9 +45,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setMessage('Wrong credentials')
+      setClassName('error')
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
       }, 5000)
     }
   }
@@ -69,6 +71,13 @@ const App = () => {
       setNewTitle('')
       setNewAuthor('')
       setNewUrl('')
+      setClassName('success')
+      setMessage(
+        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     })
   }
 
@@ -131,12 +140,13 @@ const App = () => {
       {user === null ? (
         <div>
           <h2>log in to application</h2>
-          <Notification message={errorMessage} />
+          <Notification message={message} className={className} />
           {loginForm()}
         </div>
       ) : (
         <div>
           <h2>blogs</h2>
+          <Notification message={message} className={className} />
           {user.name || user.username} logged in
           <button onClick={handleLogout}>logout</button>
           <h2>create new</h2>
