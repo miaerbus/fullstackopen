@@ -73,6 +73,17 @@ const App = () => {
     })
   }
 
+  const handleRemove = async (blog) => {
+    // if (!blog.user || blog.user.username !== user.username) {
+    //   alert('Sorry, cannot delete, this is not your blog')
+    //   return
+    // }
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      await blogService.deleteBlog(blog.id)
+      setBlogs(blogs.filter((b) => b.id !== blog.id))
+    }
+  }
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -122,7 +133,12 @@ const App = () => {
           <h2>create new</h2>
           {blogForm()}
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              user={user}
+              handleRemove={handleRemove}
+            />
           ))}
         </div>
       )}
