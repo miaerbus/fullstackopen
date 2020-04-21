@@ -22,18 +22,22 @@ const Blog = ({ blog, user, handleRemove }) => {
     setUpdatedBlog(updatedBlog)
   }
 
+  const handleVisibility = () => {
+    return setVisible(!visible)
+  }
+
   return (
-    <div style={blogStyle}>
-      <div>
+    <div className="blog" style={blogStyle}>
+      <div className="title-author">
         {blog.title} {blog.author}
-        <button onClick={() => setVisible(!visible)}>
+        <button onClick={handleVisibility}>
           {visible ? 'hide' : 'view'}
         </button>
       </div>
       {visible && (
         <div>
-          <div>{blog.url}</div>
-          <div>
+          <div className="url">{blog.url}</div>
+          <div className="likes">
             {updatedBlog.likes} <button onClick={handleLikeChange}>like</button>
           </div>
           <div>{blog.user && blog.user.name}</div>
