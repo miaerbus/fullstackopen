@@ -39,4 +39,19 @@ describe('Blog app', function () {
       cy.get('html').should('not.contain', 'Mia Erbus logged in')
     })
   })
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'root', password: 'sekret' })
+    })
+
+    it('A blog can be created', function () {
+      cy.contains('new note').click()
+      cy.get('#title').type('A new blog created by cypress')
+      cy.get('#author').type('Milly Cypress')
+      cy.get('#url').type('http://cypress.io')
+      cy.get('#create-button').click()
+      cy.contains('A new blog created by cypress')
+    })
+  })
 })
