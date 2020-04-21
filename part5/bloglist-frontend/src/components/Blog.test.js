@@ -40,12 +40,29 @@ test('clicking the button shows the blogs url and number of likes', () => {
   expect(likes).toBeNull()
   expect(url).toBeNull()
 
-  // console.log('before', prettyDOM(component.container))
-
   fireEvent.click(button)
-
-  // console.log('after', prettyDOM(component.container))
 
   expect(likes).toBeDefined()
   expect(url).toBeDefined()
+})
+
+test('clicking the like button twice the event handler is called twice', () => {
+  const blog = {
+    title: 'Component testing is done with react-testing-library',
+    author: 'Jane Doe',
+    likes: 0,
+    url: 'http://google.com',
+  }
+
+  const mockHandler = jest.fn()
+
+  const component = render(<Blog blog={blog} handleLikeChange={mockHandler} />)
+  const button = component.getByText('view')
+  fireEvent.click(button)
+
+  const likeButton = component.getByText('like')
+  fireEvent.click(likeButton)
+  fireEvent.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
 })

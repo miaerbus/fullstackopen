@@ -73,6 +73,15 @@ const App = () => {
     })
   }
 
+  const handleLikeChange = async (blog) => {
+    const newObject = {
+      ...blog,
+      likes: ++blog.likes,
+    }
+    await blogService.update(blog.id, newObject)
+    setBlogs([...blogs])
+  }
+
   const handleRemove = async (blog) => {
     // if (!blog.user || blog.user.username !== user.username) {
     //   alert('Sorry, cannot delete, this is not your blog')
@@ -138,6 +147,7 @@ const App = () => {
               blog={blog}
               user={user}
               handleRemove={handleRemove}
+              handleLikeChange={handleLikeChange}
             />
           ))}
         </div>
