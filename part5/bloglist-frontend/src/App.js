@@ -83,10 +83,6 @@ const App = () => {
   }
 
   const handleRemove = async (blog) => {
-    // if (!blog.user || blog.user.username !== user.username) {
-    //   alert('Sorry, cannot delete, this is not your blog')
-    //   return
-    // }
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       await blogService.deleteBlog(blog.id)
       setBlogs(blogs.filter((b) => b.id !== blog.id))
@@ -98,6 +94,7 @@ const App = () => {
       <div>
         username
         <input
+          id="username"
           type="text"
           value={username}
           name="Username"
@@ -107,13 +104,14 @@ const App = () => {
       <div>
         password
         <input
+          id="password"
           type="password"
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type="submit">login</button>
+      <button id="login-button" type="submit">login</button>
     </form>
   )
 
