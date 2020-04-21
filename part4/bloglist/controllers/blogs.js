@@ -50,7 +50,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response.status(204).end()
   }
 
-  return response.status(400).json({ error: 'blog does not have a user'})
+  return response.status(400).json({ error: 'blog does not have a user' })
 })
 
 blogsRouter.put('/:id', async (request, response) => {
