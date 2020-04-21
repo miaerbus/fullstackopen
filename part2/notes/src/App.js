@@ -57,7 +57,7 @@ const App = () => {
         password={password}
         handleUsernameChange={({ target }) => setUsername(target.value)}
         handlePasswordChange={({ target }) => setPassword(target.value)}
-        handle={handleLogin}
+        handleLogin={handleLogin}
       />
     </Togglable>
   )
