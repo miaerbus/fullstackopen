@@ -53,5 +53,21 @@ describe('Blog app', function () {
       cy.get('#create-button').click()
       cy.contains('A new blog created by cypress')
     })
+
+    describe('and a blog exists', function () {
+      beforeEach(function () {
+        cy.contains('new note').click()
+        cy.get('#title').type('A new blog created by cypress')
+        cy.get('#author').type('Milly Cypress')
+        cy.get('#url').type('http://cypress.io')
+        cy.get('#create-button').click()
+        cy.contains('A new blog created by cypress')
+      })
+
+      it('user can like a blog', function () {
+        cy.contains('view').click()
+        cy.contains('like').click()
+      })
+    })
   })
 })
