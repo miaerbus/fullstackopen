@@ -99,23 +99,50 @@ describe('Blog app', function () {
 
     describe('and several blogs exists', function () {
       beforeEach(function () {
-        cy.contains('new note').click()
         cy.createBlog({
           title: 'A new blog created by cypress',
           author: 'Milly Cypress',
+          likes: 3,
         })
         cy.createBlog({
           title: 'Another blog created by cypress',
           author: 'Billy Cypress',
+          likes: 5,
         })
         cy.createBlog({
           title: 'A third blog created by cypress',
           author: 'Rilly Cypress',
+          likes: 4,
         })
       })
 
-      it('blogs are ordered according to likes with the blog with the most likes being first', function () {
-        // TODO:
+      it.only('blogs are ordered according to likes with the blog with the most likes being first', function () {
+        // TODO: find all of the blogs and compare them in the callback function of a then command
+
+        // open all the blogs
+        cy.contains('view').click()
+        cy.contains('view').click()
+        cy.contains('view').click()
+
+        // store all the number of likes in an array
+        let likes = []
+        cy.get('html')
+          .find('.blog')
+          .each((blog) => {
+            likes.push(
+              Number(
+                blog[0].childNodes[1].childNodes[1].childNodes[0].innerText
+              )
+            )
+          })
+
+        // check if array is sorted correctly
+        const isSmallerThanPrevious = (current, index, array) => {
+          let nextIndex = index + 1
+          let next = array[nextIndex]
+          return nextIndex < array.length ? current >= next : true
+        }
+        console.log(likes.every(isSmallerThanPrevious))
       })
     })
   })
