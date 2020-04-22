@@ -9,7 +9,7 @@
 // ***********************************************
 
 Cypress.Commands.add('login', ({ username, password }) => {
-  cy.request('POST', 'http://localhost:3001/api/login', {
+  cy.request('POST', '/api/login', {
     username,
     password,
   }).then(({ body }) => {
@@ -20,7 +20,7 @@ Cypress.Commands.add('login', ({ username, password }) => {
 
 Cypress.Commands.add('createBlog', ({ title, author, url }) => {
   cy.request({
-    url: 'http://localhost:3001/api/blogs',
+    url: '/api/blogs',
     method: 'POST',
     body: { title, author, url },
     headers: {
