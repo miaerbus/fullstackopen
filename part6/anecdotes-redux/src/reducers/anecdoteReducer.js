@@ -17,7 +17,9 @@ const asObject = (anecdote) => {
   }
 }
 
-const initialState = anecdotesAtStart.map(asObject)
+const votesDesc = (a, b) => b.votes - a.votes
+
+const initialState = anecdotesAtStart.map(asObject).sort(votesDesc)
 
 const reducer = (state = initialState, action) => {
   console.log('state now: ', state)
@@ -34,7 +36,7 @@ const reducer = (state = initialState, action) => {
         anecdote.id === action.data.id ? updatedAnecodote : anecdote
       )
 
-      return updatedState
+      return updatedState.sort(votesDesc)
     }
     case 'NEW_ANECDOTE': {
       return [...state, action.data]
