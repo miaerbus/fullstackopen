@@ -15,12 +15,15 @@ const AnecdoteForm = () => {
     setName(event.target.value)
   }
   return (
-    <form onSubmit={addNew}>
-      <div>
-        <input value={name} onChange={handleNameChange} />
-      </div>
-      <button type="submit">create</button>
-    </form>
+    <div>
+      <h2>create new</h2>
+      <form onSubmit={addNew}>
+        <div>
+          <input value={name} onChange={handleNameChange} />
+        </div>
+        <button type="submit">create</button>
+      </form>
+    </div>
   )
 }
 
