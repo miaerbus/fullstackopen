@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { createNew } from '../reducers/anecdoteReducer'
+import { showNotificationWithTimeout } from '../reducers/notificationReducer'
 
 const AnecdoteForm = () => {
   const [name, setName] = useState('')
@@ -9,6 +10,8 @@ const AnecdoteForm = () => {
   const addNew = (event) => {
     event.preventDefault()
     dispatch(createNew(name))
+    dispatch(showNotificationWithTimeout(`you created '${name}'`))
+    setName('')
   }
 
   const handleNameChange = (event) => {
