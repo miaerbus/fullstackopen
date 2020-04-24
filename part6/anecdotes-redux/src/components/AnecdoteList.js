@@ -4,8 +4,15 @@ import { voteFor } from '../reducers/anecdoteReducer'
 import { showNotificationWithTimeout } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) => state.anecdotes)
   const dispatch = useDispatch()
+
+  const filter = useSelector((state) => state.filter)
+  const anecdotes = useSelector((state) =>
+    state.anecdotes.filter(
+      (anecdote) =>
+        anecdote.content.toLowerCase().indexOf(filter.toLowerCase()) > -1
+    )
+  )
 
   const vote = (anecdote) => {
     console.log('vote', anecdote)
