@@ -10,7 +10,7 @@ const AnecdoteForm = () => {
   const addNew = async (event) => {
     event.preventDefault()
     dispatch(createNew(name))
-    dispatch(showNotificationWithTimeout(`you created '${name}'`))
+    dispatch(showNotificationWithTimeout(`you created '${name}'`, 5))
     setName('')
   }
 

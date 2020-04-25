@@ -16,7 +16,7 @@ const AnecdoteList = () => {
 
   const vote = async (anecdote) => {
     dispatch(voteFor(anecdote))
-    dispatch(showNotificationWithTimeout(`you voted for '${anecdote.content}'`))
+    dispatch(showNotificationWithTimeout(`you voted for '${anecdote.content}'`, 10))
   }
 
   return (

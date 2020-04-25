@@ -31,14 +31,14 @@ export const hideNotification = (id) => {
 
 // https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout
 let nextNotificationId = 0
-export const showNotificationWithTimeout = (text) => {
+export const showNotificationWithTimeout = (text, time) => {
   return (dispatch) => {
     const id = nextNotificationId++
     dispatch(showNotification(id, text))
 
     setTimeout(() => {
       dispatch(hideNotification(id))
-    }, 5000)
+    }, time * 1000)
   }
 }
 
