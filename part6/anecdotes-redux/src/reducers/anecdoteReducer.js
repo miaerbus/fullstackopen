@@ -5,7 +5,7 @@ const votesDesc = (a, b) => b.votes - a.votes
 const reducer = (state = [], action) => {
   switch (action.type) {
     case 'INIT_ANECDOTES':
-      return action.data
+      return action.data.sort(votesDesc)
 
     case 'NEW_ANECDOTE':
       return [...state, action.data]
@@ -38,10 +38,15 @@ export const initialize = () => {
   }
 }
 
-export const createNew = (data) => ({
-  type: 'NEW_ANECDOTE',
-  data,
-})
+export const createNew = (content) => {
+  return async (dispatch) => {
+    const anecdote = await anecdoteService.createNew(content)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: anecdote,
+    })
+  }
+}
 
 export const voteFor = (id) => ({
   type: 'VOTE',
