@@ -5,9 +5,7 @@ const reducer = (state = '', action) => {
     }
 
     case 'HIDE_NOTIFICATION': {
-      // hide the notification if it is the last one in queue
-      if (action.data.id === nextNotificationId - 1) return ''
-      return state
+      return ''
     }
 
     default:
@@ -37,7 +35,10 @@ export const showNotificationWithTimeout = (text, time) => {
     dispatch(showNotification(id, text))
 
     setTimeout(() => {
-      dispatch(hideNotification(id))
+      // hide the notification if it is the last one in queue, no other notifications are pending
+      if (id === nextNotificationId - 1) {
+        dispatch(hideNotification(id))
+      }
     }, time * 1000)
   }
 }
