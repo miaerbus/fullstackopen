@@ -14,6 +14,7 @@ const reducer = (state = [], action) => {
       const updatedAnecodote = state.find(
         (anecdote) => anecdote.id === action.data.id
       )
+      // TODO: change to ++votes, then can fix the voteFor action creator order ?
       updatedAnecodote.votes++
 
       const updatedState = state.map((anecdote) =>
@@ -48,9 +49,15 @@ export const createNew = (content) => {
   }
 }
 
-export const voteFor = (id) => ({
-  type: 'VOTE',
-  data: { id },
-})
+export const voteFor = (anecdote) => {
+  return async (dispatch) => {
+    const id = anecdote.id
+    dispatch({
+      type: 'VOTE',
+      data: { id },
+    })
+    await anecdoteService.update(anecdote.id, anecdote)
+  }
+}
 
 export default reducer
