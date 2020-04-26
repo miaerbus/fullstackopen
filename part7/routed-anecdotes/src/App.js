@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
+import { Switch, Route, Link, Redirect, useRouteMatch } from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -70,14 +70,14 @@ const About = () => (
 
 const Footer = () => (
   <div>
-    Anecdote app for
+    Anecdote app for{' '}
     <a href="https://courses.helsinki.fi/fi/tkt21009">
       Full Stack -websovelluskehitys
     </a>
-    . See
+    . See{' '}
     <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
       https://github.com/fullstack-hy2019/routed-anecdotes/blob/master/src/App.js
-    </a>
+    </a>{' '}
     for the source code.
   </div>
 )
@@ -154,6 +154,10 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => {
+      setNotification('')
+    }, 10000)
   }
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
@@ -171,14 +175,20 @@ const App = () => {
 
   const match = useRouteMatch('/anecdotes/:id')
   const anecdote = match
-    ? anecdotes.find((anecdote) =>  anecdote.id === match.params.id)
+    ? anecdotes.find((anecdote) => anecdote.id === match.params.id)
     : null
+
+  const style = {
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1,
+  }
 
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-
+      {notification && <div style={style}>{notification}</div>}
       <Switch>
         <Route path="/anecdotes/:id">
           <Anecdote anecdote={anecdote} />
@@ -187,7 +197,7 @@ const App = () => {
           <About />
         </Route>
         <Route path="/create">
-          <CreateNew addNew={addNew} />
+          {notification ? <Redirect to="/" /> : <CreateNew addNew={addNew} />}
         </Route>
         <Route path="/">
           <AnecdoteList anecdotes={anecdotes} />
