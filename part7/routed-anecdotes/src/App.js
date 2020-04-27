@@ -104,24 +104,28 @@ const CreateNew = (props) => {
     info.reset('')
   }
 
+  const withoutReset = ({ reset, ...rest }) => rest
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...withoutReset(content)} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...withoutReset(author)} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...withoutReset(info)} />
         </div>
         <button>create</button>
-        <button type="reset" onClick={handleReset}>reset</button>
+        <button type="reset" onClick={handleReset}>
+          reset
+        </button>
       </form>
     </div>
   )
