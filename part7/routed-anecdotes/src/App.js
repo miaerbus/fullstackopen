@@ -99,9 +99,9 @@ const CreateNew = (props) => {
   }
 
   const handleReset = () => {
-    content.reset('')
-    author.reset('')
-    info.reset('')
+    content.reset()
+    author.reset()
+    info.reset()
   }
 
   const withoutReset = ({ reset, ...rest }) => rest
