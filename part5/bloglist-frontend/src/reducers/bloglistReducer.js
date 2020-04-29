@@ -27,7 +27,7 @@ const bloglistReducer = (state = [], action) => {
   }
 }
 
-export const initialize = () => {
+export const initializeBloglist = () => {
   return async (dispatch) => {
     const bloglist = await blogService.getAll()
     dispatch({

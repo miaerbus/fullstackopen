@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import { useSelector, useDispatch } from 'react-redux'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Notification from './components/Notification'
+import Blogs from './components/Blogs'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
-import {
-  initialize,
-  createBlog,
-  updateBlog,
-  deleteBlog,
-} from './reducers/bloglistReducer'
+import Users from './components/Users'
+import { createBlog } from './reducers/bloglistReducer'
 import { showNotificationWithTimeout } from './reducers/notificationReducer'
 import { login, logout, loginWithLocalstorage } from './reducers/loginReducer'
-import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
   const dispatch = useDispatch()
-  const blogs = useSelector((state) => state.bloglist)
   const user = useSelector((state) => state.user)
 
   const [username, setUsername] = useState('')
@@ -23,7 +19,6 @@ const App = () => {
 
   useEffect(() => {
     dispatch(loginWithLocalstorage())
-    dispatch(initialize())
   }, [dispatch])
 
   const handleLogin = async (event) => {
@@ -41,28 +36,6 @@ const App = () => {
 
   const handleLogout = async () => {
     dispatch(logout())
-  }
-
-  const addBlog = (blog) => {
-    blogFormRef.current.toggleVisibility()
-    dispatch(createBlog(blog))
-    dispatch(
-      showNotificationWithTimeout(
-        `a new blog ${blog.title} by ${blog.author} added`,
-        5,
-        'success'
-      )
-    )
-  }
-
-  const handleLikeChange = async (blog) => {
-    dispatch(updateBlog(blog))
-  }
-
-  const handleRemove = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      dispatch(deleteBlog(blog.id))
-    }
   }
 
   const loginForm = () => (
@@ -101,34 +74,48 @@ const App = () => {
     </Togglable>
   )
 
+  const addBlog = (blog) => {
+    blogFormRef.current.toggleVisibility()
+    dispatch(createBlog(blog))
+    dispatch(
+      showNotificationWithTimeout(
+        `a new blog ${blog.title} by ${blog.author} added`,
+        5,
+        'success'
+      )
+    )
+  }
+
   return (
-    <div>
-      {user === null ? (
-        <div>
-          <h2>log in to application</h2>
-          <Notification />
-          {loginForm()}
-        </div>
-      ) : (
-        <div>
-          <h2>blogs</h2>
-          <Notification />
-          {user.name || user.username} logged in
-          <button onClick={handleLogout}>logout</button>
-          <h2>create new</h2>
-          {blogForm()}
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user}
-              handleRemove={handleRemove}
-              handleLikeChange={handleLikeChange}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    <Router>
+      <div>
+        {user === null ? (
+          <div>
+            <h2>log in to application</h2>
+            <Notification />
+            {loginForm()}
+          </div>
+        ) : (
+          <div>
+            <h2>blogs</h2>
+            <Notification />
+            {user.name || user.username} logged in
+            <button onClick={handleLogout}>logout</button>
+            <Switch>
+              <Route path="/users">
+                <h2>Users</h2>
+                <Users />
+              </Route>
+              <Route path="/">
+                <h2>create new</h2>
+                {blogForm()}
+                <Blogs />
+              </Route>
+            </Switch>
+          </div>
+        )}
+      </div>
+    </Router>
   )
 }
 
