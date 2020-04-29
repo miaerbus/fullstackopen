@@ -10,7 +10,7 @@ const bloglistReducer = (state = [], action) => {
     case 'NEW_BLOG':
       return state.concat(action.data)
 
-    case 'LIKE_BLOG':
+    case 'LIKE_BLOG': {
       const updatedBlog = state.find((b) => b.id === action.data.id)
 
       const updatedState = state.map((b) =>
@@ -18,9 +18,20 @@ const bloglistReducer = (state = [], action) => {
       )
 
       return updatedState.sort(likesDesc)
+    }
 
     case 'DELETE_BLOG':
       return state.filter((b) => b.id !== action.data)
+
+    case 'ADD_COMMENT': {
+      const updatedBlog = action.data
+
+      const updatedState = state.map((b) =>
+        b.id === updatedBlog.id ? updatedBlog : b
+      )
+
+      return updatedState
+    }
 
     default:
       return state
@@ -67,6 +78,16 @@ export const deleteBlog = (id) => {
     dispatch({
       type: 'DELETE_BLOG',
       data: id,
+    })
+  }
+}
+
+export const addComment = (blog, comment) => {
+  return async (dispatch) => {
+    const updatedBlog = await blogService.addComment(blog.id, comment)
+    dispatch({
+      type: 'ADD_COMMENT',
+      data: updatedBlog,
     })
   }
 }
