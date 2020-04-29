@@ -6,6 +6,7 @@ import Blogs from './components/Blogs'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Users from './components/Users'
+import User from './components/User'
 import { createBlog } from './reducers/bloglistReducer'
 import { showNotificationWithTimeout } from './reducers/notificationReducer'
 import { login, logout, loginWithLocalstorage } from './reducers/loginReducer'
@@ -102,10 +103,8 @@ const App = () => {
             {user.name || user.username} logged in
             <button onClick={handleLogout}>logout</button>
             <Switch>
-              <Route path="/users">
-                <h2>Users</h2>
-                <Users />
-              </Route>
+              <Route path="/users/:id" component={User} />
+              <Route path="/users" component={Users} />
               <Route path="/">
                 <h2>create new</h2>
                 {blogForm()}

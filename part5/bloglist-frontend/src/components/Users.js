@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { initializeUsers } from '../reducers/usersReducer'
+import { BrowserRouter as Route, Link } from 'react-router-dom'
+import User from './User'
 
 const Users = () => {
   const dispatch = useDispatch()
@@ -11,22 +13,28 @@ const Users = () => {
   }, [dispatch])
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <td></td>
-          <td>blogs created</td>
-        </tr>
-      </thead>
-      <tbody>
-        {users.map((user) => (
+    <div>
+      <h2>Users</h2>
+      <table>
+        <thead>
           <tr>
-            <td>{user.name}</td>
-            <td>{user.blogs.length}</td>
+            <th></th>
+            <th>blogs created</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Route path={'/users/:id'} component={User} />
+    </div>
   )
 }
 
