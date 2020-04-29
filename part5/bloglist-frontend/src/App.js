@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Notification from './components/Notification'
+import BlogView from './components/BlogView'
 import Blogs from './components/Blogs'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
@@ -103,6 +104,7 @@ const App = () => {
             {user.name || user.username} logged in
             <button onClick={handleLogout}>logout</button>
             <Switch>
+              <Route path="/blogs/:id" component={BlogView} />
               <Route path="/users/:id" component={User} />
               <Route path="/users" component={Users} />
               <Route path="/">

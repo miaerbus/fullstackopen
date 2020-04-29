@@ -1,42 +1,40 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import {
-  initializeBloglist,
-  updateBlog,
-  deleteBlog,
-} from '../reducers/bloglistReducer'
-import Blog from './Blog'
+import { BrowserRouter as Route, Link } from 'react-router-dom'
+import { initializeBloglist } from '../reducers/bloglistReducer'
+// import Blog from './Blog'
+import BlogView from './BlogView'
 
 const Blogs = () => {
   const dispatch = useDispatch()
   const blogs = useSelector((state) => state.bloglist)
-  const user = useSelector((state) => state.user)
 
   useEffect(() => {
     dispatch(initializeBloglist())
   }, [dispatch])
 
-  const handleLikeChange = async (blog) => {
-    dispatch(updateBlog(blog))
-  }
+  // const handleRemove = async (blog) => {
+  //   if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+  //     dispatch(deleteBlog(blog.id))
+  //   }
+  // }
 
-  const handleRemove = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      dispatch(deleteBlog(blog.id))
-    }
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5,
   }
 
   return (
     <div>
       {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          user={user}
-          handleRemove={handleRemove}
-          handleLikeChange={handleLikeChange}
-        />
+        <div className="blog" style={blogStyle} key={blog.id}>
+          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+        </div>
       ))}
+      <Route path={'/blogs/:id'} component={BlogView} />
     </div>
   )
 }
