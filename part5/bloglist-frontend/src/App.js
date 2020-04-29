@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import Notification from './components/Notification'
 import BlogView from './components/BlogView'
 import Blogs from './components/Blogs'
@@ -71,7 +71,7 @@ const App = () => {
   const blogFormRef = React.createRef()
 
   const blogForm = () => (
-    <Togglable buttonLabel="new note" ref={blogFormRef}>
+    <Togglable buttonLabel="create new" ref={blogFormRef}>
       <BlogForm createBlog={addBlog}></BlogForm>
     </Togglable>
   )
@@ -88,6 +88,16 @@ const App = () => {
     )
   }
 
+  const menuStyle = {
+    display: 'flex',
+    padding: 5,
+    backgroundColor: 'lightgrey',
+  }
+
+  const menuItemStyle = {
+    marginRight: 5,
+  }
+
   return (
     <Router>
       <div>
@@ -99,16 +109,25 @@ const App = () => {
           </div>
         ) : (
           <div>
-            <h2>blogs</h2>
+            <div className="menu" style={menuStyle}>
+              <Link to="/" style={menuItemStyle}>
+                blogs
+              </Link>
+              <Link to="/users" style={menuItemStyle}>
+                users
+              </Link>
+              <div style={menuItemStyle}>
+                {user.name || user.username} logged in
+              </div>
+              <button onClick={handleLogout}>logout</button>
+            </div>
+            <h2>blog app</h2>
             <Notification />
-            {user.name || user.username} logged in
-            <button onClick={handleLogout}>logout</button>
             <Switch>
               <Route path="/blogs/:id" component={BlogView} />
               <Route path="/users/:id" component={User} />
               <Route path="/users" component={Users} />
               <Route path="/">
-                <h2>create new</h2>
                 {blogForm()}
                 <Blogs />
               </Route>
