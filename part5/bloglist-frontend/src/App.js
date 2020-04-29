@@ -3,89 +3,65 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import {
+  initialize,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+} from './reducers/bloglistReducer'
+import { showNotificationWithTimeout } from './reducers/notificationReducer'
+import { login, logout, loginWithLocalstorage } from './reducers/loginReducer'
+import { useSelector, useDispatch } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [message, setMessage] = useState(null)
-  const [className, setClassName] = useState(null)
+  const dispatch = useDispatch()
+  const blogs = useSelector((state) => state.bloglist)
+  const user = useSelector((state) => state.user)
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-
-  const likesDesc = (a, b) => b.likes - a.likes
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs.sort(likesDesc)))
-  }, [])
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
+    dispatch(loginWithLocalstorage())
+    dispatch(initialize())
+  }, [dispatch])
 
   const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with', username, password)
 
-    event.preventDefault()
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      dispatch(login(username, password))
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessage('Wrong credentials')
-      setClassName('error')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      dispatch(showNotificationWithTimeout('Wrong credentials', 5, 'error'))
     }
   }
 
   const handleLogout = async () => {
-    window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    dispatch(logout())
   }
 
-  const addBlog = (blogObject) => {
+  const addBlog = (blog) => {
     blogFormRef.current.toggleVisibility()
-    blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog))
-      setClassName('success')
-      setMessage(
-        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+    dispatch(createBlog(blog))
+    dispatch(
+      showNotificationWithTimeout(
+        `a new blog ${blog.title} by ${blog.author} added`,
+        5,
+        'success'
       )
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    })
+    )
   }
 
   const handleLikeChange = async (blog) => {
-    const newObject = {
-      ...blog,
-      likes: ++blog.likes,
-    }
-    await blogService.update(blog.id, newObject)
-    setBlogs([...blogs])
+    dispatch(updateBlog(blog))
   }
 
   const handleRemove = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      await blogService.deleteBlog(blog.id)
-      setBlogs(blogs.filter((b) => b.id !== blog.id))
+      dispatch(deleteBlog(blog.id))
     }
   }
 
@@ -111,7 +87,9 @@ const App = () => {
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button id="login-button" type="submit">login</button>
+      <button id="login-button" type="submit">
+        login
+      </button>
     </form>
   )
 
@@ -128,13 +106,13 @@ const App = () => {
       {user === null ? (
         <div>
           <h2>log in to application</h2>
-          <Notification message={message} className={className} />
+          <Notification />
           {loginForm()}
         </div>
       ) : (
         <div>
           <h2>blogs</h2>
-          <Notification message={message} className={className} />
+          <Notification />
           {user.name || user.username} logged in
           <button onClick={handleLogout}>logout</button>
           <h2>create new</h2>
