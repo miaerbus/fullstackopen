@@ -11,6 +11,20 @@ import User from './components/User'
 import { createBlog } from './reducers/bloglistReducer'
 import { showNotificationWithTimeout } from './reducers/notificationReducer'
 import { login, logout, loginWithLocalstorage } from './reducers/loginReducer'
+import styled from 'styled-components'
+
+const Button = styled.button`
+  background: Bisque;
+  font-size: 1em;
+  margin: 0em;
+  padding: 0.25em 1em;
+  border: 2px solid Chocolate;
+  border-radius: 3px;
+`
+
+const Input = styled.input`
+  margin: 0.25em;
+`
 
 const App = () => {
   const dispatch = useDispatch()
@@ -44,7 +58,7 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-        <input
+        <Input
           id="username"
           type="text"
           value={username}
@@ -54,7 +68,7 @@ const App = () => {
       </div>
       <div>
         password
-        <input
+        <Input
           id="password"
           type="password"
           value={password}
@@ -62,9 +76,9 @@ const App = () => {
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button id="login-button" type="submit">
+      <Button id="login-button" type="submit">
         login
-      </button>
+      </Button>
     </form>
   )
 
@@ -90,8 +104,15 @@ const App = () => {
 
   const menuStyle = {
     display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 5,
     backgroundColor: 'lightgrey',
+  }
+
+  const menuGroupStyle = {
+    display: 'flex',
+    alignItems: 'center',
   }
 
   const menuItemStyle = {
@@ -110,16 +131,20 @@ const App = () => {
         ) : (
           <div>
             <div className="menu" style={menuStyle}>
-              <Link to="/" style={menuItemStyle}>
-                blogs
-              </Link>
-              <Link to="/users" style={menuItemStyle}>
-                users
-              </Link>
-              <div style={menuItemStyle}>
-                {user.name || user.username} logged in
+              <div style={menuGroupStyle}>
+                <Link to="/" style={menuItemStyle}>
+                  blogs
+                </Link>
+                <Link to="/users" style={menuItemStyle}>
+                  users
+                </Link>
               </div>
-              <button onClick={handleLogout}>logout</button>
+              <div style={menuGroupStyle}>
+                <div style={menuItemStyle}>
+                  {user.name || user.username} logged in
+                </div>
+                <Button onClick={handleLogout}>logout</Button>
+              </div>
             </div>
             <h2>blog app</h2>
             <Notification />
