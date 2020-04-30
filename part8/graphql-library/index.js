@@ -97,7 +97,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String): [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
 `
@@ -109,7 +109,19 @@ const resolvers = {
     allBooks: (root, args) => {
       returnedBooks = []
       books.forEach((b) => {
-        if (b.author == args.author) returnedBooks.push(b)
+        // allBooks have two optional parameters: author and genre
+        // first, check for the book's author
+        if (b.author === args.author) {
+          // push to array returnedBooks only if book is not already in it
+          returnedBooks.indexOf(b) === -1 && returnedBooks.push(b)
+        }
+        // second, check for each genre of the book
+        b.genres.forEach((g) => {
+          if (g === args.genre) {
+            // push to array returnedBooks only if book is not already in it
+            returnedBooks.indexOf(b) === -1 && returnedBooks.push(b)
+          }
+        })
       })
       return returnedBooks
     },
