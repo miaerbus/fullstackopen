@@ -20,6 +20,7 @@ const NewBook = (props) => {
   const submit = async (event) => {
     event.preventDefault()
 
+    // TODO: is published required or optional?
     addBook({ variables: { title, author, published, genres } })
 
     setTitle('')
