@@ -1,83 +1,28 @@
+require('dotenv').config()
 const { ApolloServer, gql } = require('apollo-server')
-const { v1: uuid } = require('uuid')
+const mongoose = require('mongoose')
+const Author = require('./models/author')
+const Book = require('./models/book')
+// const jwt = require('jsonwebtoken')
 
-let authors = [
-  {
-    name: 'Robert Martin',
-    id: 'afa51ab0-344d-11e9-a414-719c6709cf3e',
-    born: 1952,
-  },
-  {
-    name: 'Martin Fowler',
-    id: 'afa5b6f0-344d-11e9-a414-719c6709cf3e',
-    born: 1963,
-  },
-  {
-    name: 'Fyodor Dostoevsky',
-    id: 'afa5b6f1-344d-11e9-a414-719c6709cf3e',
-    born: 1821,
-  },
-  {
-    name: 'Joshua Kerievsky', // birthyear not known
-    id: 'afa5b6f2-344d-11e9-a414-719c6709cf3e',
-  },
-  {
-    name: 'Sandi Metz', // birthyear not known
-    id: 'afa5b6f3-344d-11e9-a414-719c6709cf3e',
-  },
-]
+// const JWT_SECRET = process.env.JWT_SECRET
 
-let books = [
-  {
-    title: 'Clean Code',
-    published: 2008,
-    author: 'Robert Martin',
-    id: 'afa5b6f4-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring'],
-  },
-  {
-    title: 'Agile software development',
-    published: 2002,
-    author: 'Robert Martin',
-    id: 'afa5b6f5-344d-11e9-a414-719c6709cf3e',
-    genres: ['agile', 'patterns', 'design'],
-  },
-  {
-    title: 'Refactoring, edition 2',
-    published: 2018,
-    author: 'Martin Fowler',
-    id: 'afa5de00-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring'],
-  },
-  {
-    title: 'Refactoring to patterns',
-    published: 2008,
-    author: 'Joshua Kerievsky',
-    id: 'afa5de01-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring', 'patterns'],
-  },
-  {
-    title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
-    published: 2012,
-    author: 'Sandi Metz',
-    id: 'afa5de02-344d-11e9-a414-719c6709cf3e',
-    genres: ['refactoring', 'design'],
-  },
-  {
-    title: 'Crime and punishment',
-    published: 1866,
-    author: 'Fyodor Dostoevsky',
-    id: 'afa5de03-344d-11e9-a414-719c6709cf3e',
-    genres: ['classic', 'crime'],
-  },
-  {
-    title: 'The Demon',
-    published: 1872,
-    author: 'Fyodor Dostoevsky',
-    id: 'afa5de04-344d-11e9-a414-719c6709cf3e',
-    genres: ['classic', 'revolution'],
-  },
-]
+mongoose.set('useFindAndModify', false)
+mongoose.set('useUnifiedTopology', true)
+mongoose.set('useCreateIndex', true)
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose
+  .connect(MONGODB_URI, { useNewUrlParser: true })
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
 
 const typeDefs = gql`
   type Author {
@@ -88,11 +33,11 @@ const typeDefs = gql`
   }
 
   type Book {
-    title: ID!
-    published: Int
-    author: String!
-    id: ID!
+    title: String!
+    published: Int!
+    author: Author!
     genres: [String!]
+    id: ID!
   }
 
   type Query {
@@ -105,8 +50,8 @@ const typeDefs = gql`
   type Mutation {
     addBook(
       title: String!
-      author: String
-      published: Int
+      author: String!
+      published: Int!
       genres: [String!]
     ): Book
     editAuthor(name: String!, setBornTo: Int!): Author
@@ -115,30 +60,29 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
-      returnedBooks = []
-      books.forEach((b) => {
-        // allBooks have two optional parameters: author and genre
-        // first, check for the book's author
-        if (b.author === args.author) {
-          // push to array returnedBooks only if book is not already in it
-          returnedBooks.indexOf(b) === -1 && returnedBooks.push(b)
-        }
-        // second, check for each genre of the book
-        b.genres.forEach((g) => {
-          if (g === args.genre) {
-            // push to array returnedBooks only if book is not already in it
-            returnedBooks.indexOf(b) === -1 && returnedBooks.push(b)
-          }
-        })
-      })
-      // just for testing: if no books are found, display all the books
-      if (returnedBooks.length === 0) return books
-      return returnedBooks
-    },
-    allAuthors: () => authors,
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allBooks: (root, args) => Book.find({}),
+    // returnedBooks = []
+    // books.forEach((b) => {
+    //   // allBooks have two optional parameters: author and genre
+    //   // first, check for the book's author
+    //   if (b.author === args.author) {
+    //     // push to array returnedBooks only if book is not already in it
+    //     returnedBooks.indexOf(b) === -1 && returnedBooks.push(b)
+    //   }
+    //   // second, check for each genre of the book
+    //   b.genres.forEach((g) => {
+    //     if (g === args.genre) {
+    //       // push to array returnedBooks only if book is not already in it
+    //       returnedBooks.indexOf(b) === -1 && returnedBooks.push(b)
+    //     }
+    //   })
+    // })
+    // // just for testing: if no books are found, display all the books
+    // if (returnedBooks.length === 0) return books
+    // return returnedBooks
+    allAuthors: () => Author.find({}),
   },
   Author: {
     bookCount: (root) =>
@@ -149,21 +93,28 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
+      const author = new Author({
+        name: args.author,
+        born: null,
+        bookCount: 1,
+      })
+      author.save()
+
+      const book = new Book({ ...args, author })
+      return book.save()
 
       // if author doesn't already exist, add it to array
-      if (authors.every((a) => a.name !== args.author)) {
-        const author = {
-          name: args.author,
-          id: uuid(),
-          born: null,
-          bookCount: 1,
-        }
-        authors = authors.concat(author)
-      }
+      // if (authors.every((a) => a.name !== args.author)) {
+      //   const author = {
+      //     name: args.author,
+      //     id: uuid(),
+      //     born: null,
+      //     bookCount: 1,
+      //   }
+      //   authors = authors.concat(author)
+      // }
 
-      return book
+      // return book
     },
 
     editAuthor: (root, args) => {
