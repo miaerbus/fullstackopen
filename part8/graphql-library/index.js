@@ -86,44 +86,39 @@ const resolvers = {
   },
   Author: {
     bookCount: (root) =>
-      books.reduce(
+      Book.find({}).reduce(
         (sum, book) => (book.author === root.name ? sum + 1 : sum),
         0
       ),
   },
   Mutation: {
-    addBook: (root, args) => {
-      const author = new Author({
+    addBook: async (root, args) => {
+      let author = await Author.findOne({ name: { $in: [args.author] } })
+
+      if (author) {
+        const book = new Book({ ...args, author })
+        return book.save()
+      }
+
+      let newAuthor = new Author({
         name: args.author,
         born: null,
         bookCount: 1,
       })
-      author.save()
+      newAuthor.save()
 
-      const book = new Book({ ...args, author })
+      const book = new Book({ ...args, newAuthor })
       return book.save()
-
-      // if author doesn't already exist, add it to array
-      // if (authors.every((a) => a.name !== args.author)) {
-      //   const author = {
-      //     name: args.author,
-      //     id: uuid(),
-      //     born: null,
-      //     bookCount: 1,
-      //   }
-      //   authors = authors.concat(author)
-      // }
-
-      // return book
     },
 
-    editAuthor: (root, args) => {
-      let author = authors.find((a) => a.name === args.name)
-      if (author) {
-        author.born = args.setBornTo
-        return author
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: { $in: [args.name] } })
+
+      if (!author) {
+        return null
       }
-      return null
+      author.born = args.setBornTo
+      return author.save()
     },
   },
 }
